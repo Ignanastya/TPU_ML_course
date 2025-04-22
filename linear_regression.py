@@ -6,7 +6,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_absolute_error
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import mean_absolute_percentage_error
+
 from joblib import dump
 
 LINEAR_MODELS_MAPPER = {'Ridge': Ridge,
@@ -57,17 +58,21 @@ if __name__ == '__main__':
     y_pred_baseline = np.random.normal(y_mean, y_std, len(y_train))
 
     predicted_values = np.squeeze(reg.predict(X_test))
+    baseline_mae = mean_absolute_error(y_train, y_pred_baseline)
+    model_mae = mean_absolute_error(y_test, predicted_values)
 
     print(reg.score(X_test, y_test))
     print("Mean temperature value: ", y_mean)
-    print("Baseline MAE: ", mean_absolute_error(y_train, y_pred_baseline))
-    print("Model MAE: ", mean_absolute_error(y_test, predicted_values))
-    print("Baseline MSE: ", mean_squared_error(y_train, y_pred_baseline))
-    print("Model MSE: ", mean_squared_error(y_test, predicted_values))
+    print("Baseline MAE: ", baseline_mae)
+    print("Model MAE: ", model_mae)
+
+    y_min = y_train.values.min()
+    y_max = y_train.values.max()
+
+    print("In range: [", y_min, ";", y_max, "]")
+    print("MAE in percents: ", model_mae*100/(y_max-y_min), "%")
 
     intercept = reg.intercept_.astype(float)
-
-
     coefficients = reg.coef_.astype(float)
     intercept = pd.Series(intercept, name='intercept')
     coefficients = pd.Series(coefficients[0], name='coefficients')

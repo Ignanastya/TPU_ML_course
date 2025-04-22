@@ -1,0 +1,51 @@
+schema: '2.0'
+stages:
+  data_preparation:
+    cmd: python data_prep.py -id data/raw -od data/prepared -p params.yaml
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: b7c60a68cf5ff53e8bfd524140dd82fe.dir
+      size: 11433752
+      nfiles: 2
+    - path: data_prep.py
+      hash: md5
+      md5: d9dca85e499ad93a3156cb3377a4e690
+      size: 4706
+    params:
+      params.yaml:
+        data_preparation:
+          train_test_ratio: 0.7
+          train_val_ratio: 0.9
+          random_state: 42
+    outs:
+    - path: data/prepared
+      hash: md5
+      md5: e77da7e5b40fa1002d787c07cc9da5c7.dir
+      size: 5218768
+      nfiles: 8
+  linear_regression:
+    cmd: python linear_regression.py -id data/prepared -od data/models -mn LinearRegression
+    deps:
+    - path: data/prepared
+      hash: md5
+      md5: e77da7e5b40fa1002d787c07cc9da5c7.dir
+      size: 5218768
+      nfiles: 8
+    - path: linear_regression.py
+      hash: md5
+      md5: 0a00085c27b04bb54c306ace5a443f1d
+      size: 3173
+    params:
+      params.yaml:
+        linear_regression:
+          model_name: LinearRegression
+    outs:
+    - path: data/models/LinearRegression.csv
+      hash: md5
+      md5: 3b16f3ff8c154902d2e8281c18fb66fc
+      size: 67
+    - path: data/models/LinearRegression.joblib
+      hash: md5
+      md5: bad9d354362d281c1817ff7c3bbe3df5
+      size: 911
