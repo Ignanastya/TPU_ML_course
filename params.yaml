@@ -5,6 +5,7 @@ data_preparation:
 linear_regression:
   model_name: 'LinearRegression'
 decision_tree:
+  model_name: 'DecisionTree'
   max_depth: [ 2, 4, 6, 7 ]
   splitter: [ 'best', 'random' ]
   min_samples_split: [ 2, 3, 4 ]

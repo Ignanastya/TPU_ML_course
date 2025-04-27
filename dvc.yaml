@@ -40,7 +40,7 @@ stages:
   #   params:
   #     - linear_regression
   decision_tree:
-    cmd: python decision_tree.py -id data/prepared -od data/models -bm data/models/${linear_regression.model_name}.joblib -mn ${decision_tree.model_name} -p params.yaml
+    cmd: python decision_tree.py -id data/prepared -od data/models -bm data/models/${linear_regression.model_name}.joblib -mn ${decision_tree.model_name}
     deps:
       - decision_tree.py
       - data/prepared

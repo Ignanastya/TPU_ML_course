@@ -6,9 +6,9 @@ import numpy as np
 from sklearn import tree
 from sklearn.ensemble import RandomForestRegressor, ExtraTreesRegressor
 from sklearn.metrics import mean_absolute_error
+from matplotlib import pyplot as plt
 from joblib import dump, load
 import random
-from sklearn.model_selection import GridSearchCV
 
 TREES_MODELS_MAPPER = {'DecisionTree': tree.DecisionTreeRegressor,
                        'RandomForest': RandomForestRegressor,
@@ -56,23 +56,29 @@ if __name__ == '__main__':
     y_test = pd.read_csv(y_test_name)
 
     random.seed(42)
-    decision_tree_model = TREES_MODELS_MAPPER.get(model_name)()
-    decision_tree_regressor = GridSearchCV(decision_tree_model, params[model_name])
 
-    if isinstance(decision_tree_model, RandomForestRegressor) or isinstance(decision_tree_model, ExtraTreesRegressor):
-        y_train = np.ravel(y_train.values)
-        y_test = np.ravel(y_test.values)
-    decision_tree_regressor = decision_tree_regressor.fit(X=X_train, y=y_train)
+    dTree = TREES_MODELS_MAPPER.get(model_name)().fit(X_train, y_train)
 
     baseline_model = load(baseline_model_path)
     y_pred_baseline = np.squeeze(baseline_model.predict(X_test))
 
-    predicted_values = np.squeeze(decision_tree_regressor.predict(X_test))
+    predicted_values = np.squeeze(dTree.predict(X_test))
+    baseline_mae = mean_absolute_error(y_test, y_pred_baseline)
+    model_mae = mean_absolute_error(y_test, predicted_values)
 
-    print(decision_tree_regressor.score(X_test, y_test))
-    print(decision_tree_regressor.best_params_)
+    print(dTree.score(X_test, y_test))
+    print("Baseline MAE: ", baseline_mae)
+    print("Model MAE: ", model_mae)
 
-    print("Baseline MAE: ", mean_absolute_error(y_test, y_pred_baseline))
-    print("Model MAE: ", mean_absolute_error(y_test, predicted_values))
+    y_min = y_train.values.min()
+    y_max = y_train.values.max()
 
-    dump(decision_tree_regressor, output_model_joblib_path)
+    print("In range: [", y_min, ";", y_max, "]")
+    print("MAE in percents: ", model_mae*100/(y_max-y_min), "%")
+
+    dump(dTree, output_model_joblib_path)
+
+    fig, axes = plt.subplots(nrows = 1, ncols = 1, figsize = (4,3), dpi = 450)
+    tree.plot_tree(dTree, max_depth=2)
+    plt.savefig('images/dTree.png')
+    plt.show()

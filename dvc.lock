@@ -34,8 +34,8 @@ stages:
       nfiles: 8
     - path: linear_regression.py
       hash: md5
-      md5: 0a00085c27b04bb54c306ace5a443f1d
-      size: 3173
+      md5: 9fde19d8821c4eddd18b31d5099964a8
+      size: 3284
     params:
       params.yaml:
         linear_regression:
@@ -49,3 +49,46 @@ stages:
       hash: md5
       md5: bad9d354362d281c1817ff7c3bbe3df5
       size: 911
+  decision_tree:
+    cmd: python decision_tree.py -id data/prepared -od data/models -bm data/models/LinearRegression.joblib
+      -mn DecisionTree
+    deps:
+    - path: data/models/LinearRegression.joblib
+      hash: md5
+      md5: bad9d354362d281c1817ff7c3bbe3df5
+      size: 911
+    - path: data/prepared
+      hash: md5
+      md5: e77da7e5b40fa1002d787c07cc9da5c7.dir
+      size: 5218768
+      nfiles: 8
+    - path: decision_tree.py
+      hash: md5
+      md5: f42e835bf731355731f7001b520f8dca
+      size: 3025
+    params:
+      params.yaml:
+        decision_tree:
+          model_name: DecisionTree
+          max_depth:
+          - 2
+          - 4
+          - 6
+          - 7
+          splitter:
+          - best
+          - random
+          min_samples_split:
+          - 2
+          - 3
+          - 4
+          min_samples_leaf:
+          - 1
+          - 2
+          - 3
+          - 4
+    outs:
+    - path: data/models/DecisionTree.joblib
+      hash: md5
+      md5: a31b146dcfc20c3d5bb61494610fde4a
+      size: 224161
