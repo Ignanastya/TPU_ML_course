@@ -34,8 +34,8 @@ stages:
       nfiles: 8
     - path: linear_regression.py
       hash: md5
-      md5: 9fde19d8821c4eddd18b31d5099964a8
-      size: 3284
+      md5: 15337cdad688c246745c518225aadc03
+      size: 3793
     params:
       params.yaml:
         linear_regression:
@@ -47,7 +47,7 @@ stages:
       size: 67
     - path: data/models/LinearRegression.joblib
       hash: md5
-      md5: bad9d354362d281c1817ff7c3bbe3df5
+      md5: b54264b19938a358f9626d8c8e88de92
       size: 911
   decision_tree:
     cmd: python decision_tree.py -id data/prepared -od data/models -bm data/models/LinearRegression.joblib
@@ -55,7 +55,7 @@ stages:
     deps:
     - path: data/models/LinearRegression.joblib
       hash: md5
-      md5: bad9d354362d281c1817ff7c3bbe3df5
+      md5: b54264b19938a358f9626d8c8e88de92
       size: 911
     - path: data/prepared
       hash: md5
@@ -64,31 +64,156 @@ stages:
       nfiles: 8
     - path: decision_tree.py
       hash: md5
-      md5: f42e835bf731355731f7001b520f8dca
-      size: 3025
+      md5: ce7d94e9fbd5874a535c7e8173428e5c
+      size: 3593
     params:
       params.yaml:
         decision_tree:
           model_name: DecisionTree
-          max_depth:
-          - 2
-          - 4
-          - 6
-          - 7
-          splitter:
-          - best
-          - random
-          min_samples_split:
-          - 2
-          - 3
-          - 4
-          min_samples_leaf:
-          - 1
-          - 2
-          - 3
-          - 4
+          grid_search:
+            max_depth:
+            - 2
+            - 4
+            - 6
+            - 7
+            splitter:
+            - best
+            - random
+            min_samples_split:
+            - 2
+            - 3
+            - 4
+            min_samples_leaf:
+            - 1
+            - 2
+            - 3
+            - 4
     outs:
     - path: data/models/DecisionTree.joblib
       hash: md5
-      md5: a31b146dcfc20c3d5bb61494610fde4a
-      size: 224161
+      md5: 5edad204df97a4e15f90f5b1e631b369
+      size: 31631
+  catboost:
+    cmd: python catboosting.py -id data/prepared -od data/models -bm data/models/LinearRegression.joblib
+      -mn CatBoost
+    deps:
+    - path: catboosting.py
+      hash: md5
+      md5: d210703f4ecd112f1c33e038b9dcd0da
+      size: 3495
+    - path: data/models/LinearRegression.joblib
+      hash: md5
+      md5: b54264b19938a358f9626d8c8e88de92
+      size: 911
+    - path: data/prepared
+      hash: md5
+      md5: e77da7e5b40fa1002d787c07cc9da5c7.dir
+      size: 5218768
+      nfiles: 8
+    params:
+      params.yaml:
+        catboost:
+          model_name: CatBoost
+          grid_search:
+            n_estimators:
+            - 1
+            - 2
+            - 5
+            - 10
+            - 15
+            max_depth:
+            - 2
+            - 4
+            - 6
+            - 7
+            eta:
+            - 0.3
+            - 0.1
+            - 0.05
+            - 0.01
+            subsample:
+            - 0.7
+            - 0.8
+            - 0.9
+            - 1
+    outs:
+    - path: data/models/CatBoost.joblib
+      hash: md5
+      md5: 3c3475e7fda6b4588f7eb473034606bb
+      size: 90086
+  xgboost:
+    cmd: python xgboosting.py -id data/prepared -od data/models -bm data/models/LinearRegression.joblib
+      -mn XGBoost
+    deps:
+    - path: data/models/LinearRegression.joblib
+      hash: md5
+      md5: b54264b19938a358f9626d8c8e88de92
+      size: 911
+    - path: data/prepared
+      hash: md5
+      md5: e77da7e5b40fa1002d787c07cc9da5c7.dir
+      size: 5218768
+      nfiles: 8
+    - path: xgboosting.py
+      hash: md5
+      md5: 391dceca1d4293dce727d3893c3c9023
+      size: 3132
+    params:
+      params.yaml:
+        xgboost:
+          model_name: XGBoost
+          grid_search:
+            n_estimators:
+            - 1
+            - 2
+            - 5
+            - 10
+            - 15
+            max_depth:
+            - 2
+            - 4
+            - 6
+            - 7
+            eta:
+            - 0.3
+            - 0.1
+            - 0.05
+            - 0.01
+            subsample:
+            - 0.7
+            - 0.8
+            - 0.9
+            - 1
+    outs:
+    - path: data/models/XGBoost.joblib
+      hash: md5
+      md5: 9d7e8b4c03b2bd11b0d99b1855b8b5cd
+      size: 164054
+  neur_network:
+    cmd: python neur_network.py -id data/prepared -od data/logs/
+    deps:
+    - path: data/prepared
+      hash: md5
+      md5: e77da7e5b40fa1002d787c07cc9da5c7.dir
+      size: 5218768
+      nfiles: 8
+    - path: neur_network.py
+      hash: md5
+      md5: 268af9a165d75af9f5ee3037769ff02a
+      size: 6741
+    params:
+      params.yaml:
+        neur_network:
+          neurons_cnt:
+          - 64
+          - 128
+          - 256
+          batch_size:
+          - 32
+          - 64
+          - 128
+    outs:
+    - path: data/models/neur_network.keras
+      hash: md5
+      md5: ad2060567cf83caf2ae021f2dd270062
+      size: 15845

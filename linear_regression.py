@@ -6,7 +6,8 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_absolute_error
-from sklearn.metrics import mean_absolute_percentage_error
+from matplotlib import pyplot as plt
+import seaborn as sns
 
 from joblib import dump
 
@@ -62,12 +63,11 @@ if __name__ == '__main__':
     model_mae = mean_absolute_error(y_test, predicted_values)
 
     print(reg.score(X_test, y_test))
-    print("Mean temperature value: ", y_mean)
     print("Baseline MAE: ", baseline_mae)
     print("Model MAE: ", model_mae)
 
-    y_min = y_train.values.min()
-    y_max = y_train.values.max()
+    y_min = y_test.values.min()
+    y_max = y_test.values.max()
 
     print("In range: [", y_min, ";", y_max, "]")
     print("MAE in percents: ", model_mae*100/(y_max-y_min), "%")
@@ -81,5 +81,20 @@ if __name__ == '__main__':
     columns = [x for x in range(len(coefficients))]
     out_model = pd.DataFrame([coefficients, intercept])
     out_model.to_csv(output_model_path, index=False)
+
+    # # Plot feature weights distributions
+    # feature_weights = coefficients
+    # feature_weights.add(intercept)
+    # feature_names = X_train.columns
+    # feature_names.append(pd.Index(["intercept"]))
+    # plt.figure(figsize=(8, 4))
+    # bar = sns.barplot(x=feature_weights, y=feature_names, width=0.6, color='lightskyblue')
+    # plt.xlim(-0.30, 0.20)
+    # plt.xlabel('Weights')
+    # plt.ylabel('Features')
+    # for i in bar.containers:
+    #     bar.bar_label(i,)
+    # plt.savefig('images/linRegrWeights.png')
+    # plt.show()
 
     dump(reg, output_model_joblib_path)
